@@ -10,20 +10,12 @@ import time
 import concurrent.futures
 
 dept_dict={}
-course_dict={}
+all_list=[]
 
-def open(url, tag=None, lxml=False):
+def open(url):
     with urllib.request.urlopen(url) as url:
         r=url.read()
-        soup=None
-        if tag:
-            only_tags=SoupStrainer(tag)
-            soup=BeautifulSoup(r, 'html.parser', parse_only=only_tags)
-        elif not lxml:
-            soup=BeautifulSoup(r, 'html5lib')
-        else:
-            soup=BeautifulSoup(r, 'lxml')
-        return soup
+        return BeautifulSoup(r, 'html5lib')
 
 def a_scrape(elem):
     for j in elem.find_all('a'):
@@ -43,14 +35,26 @@ def scrape(url):
                 a_scrape(x)
 
 def scrape_courses(url):
-    soup=open(url, 'a')
-    for uls in soup:
-        if uls.has_attr('name'):
+    soup=open(url)
+    cname=str(soup.find('h1').select('br')[len(soup.find('h1').find_all('br'))-1].next_sibling)
+    course_dict={'cname':cname.strip('\n')}
+    c_list=[]
+    all_a_elems=soup.find_all('a')
+    for uls in all_a_elems:
+        if uls.has_attr('name') and uls.findChildren():
+            temp_dict={'title':uls.find('b').getText()}
             if uls.findChildren() and len(uls.find_all('br'))>1:
-                course_dict[uls.find('b').getText()]=str(uls.select('br')[0].next_sibling)
+                temp_dict['description']=str(uls.select('br')[0].next_sibling)
             else:
-                course_dict[uls.find('b').getText()]='N/A'
+                temp_dict['description']='N/A'
+            c_list.append(temp_dict)
+    course_dict['courses']=c_list
+    all_list.append(course_dict)
 
+def write_JSON(dict):
+    with io.open('../myplanB/courses.json','w') as fout:
+        json.dump(dict,fout)
+    
 def normalize():
     json_data=[]
     for k,v in course_dict.items():
@@ -65,11 +69,13 @@ print('Number of departments: ', len(dept_dict))
 URLS=(base_url+i for i in dept_dict.values())
 with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
     future_results={executor.submit(scrape_courses, url): url for url in URLS}
-
+'''
 with io.open('../myplanB/courses.json','w') as fout:
     json.dump(normalize(), fout)
+'''
+write_JSON(all_list)
+print('Number of departments in JSON file: ', len(all_list))
 print('Done!')
-print('Number of courses: ', len(course_dict))
 
 t1=time.time()
 total_time=t1-t0
