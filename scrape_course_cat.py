@@ -9,7 +9,7 @@ import io
 import time
 import concurrent.futures
 
-dept_dict={}
+dept_list=[]
 all_list=[]
 
 def open(url):
@@ -20,7 +20,7 @@ def open(url):
 def a_scrape(elem):
     for j in elem.find_all('a'):
         if '.html' in j['href']:
-            dept_dict[j.getText()]=j['href']
+            dept_list.append(j['href'])
 
 def scrape(url):
     soup=open(url)
@@ -64,9 +64,9 @@ def normalize():
 t0=time.time()
 base_url='https://www.washington.edu/students/crscat/'
 scrape(base_url)
-print('Number of departments: ', len(dept_dict))
-
-URLS=(base_url+i for i in dept_dict.values())
+dept_list=set(dept_list)
+print('Number of departments: ', len(dept_list))
+URLS=(base_url+i for i in dept_list)
 with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
     future_results={executor.submit(scrape_courses, url): url for url in URLS}
 '''
