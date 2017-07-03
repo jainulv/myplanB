@@ -5,8 +5,12 @@
 
 import scrapy
 
-class CcScrapeItem(scrapy.Item):
+class courseItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    Title = scrapy.Field()
+    title = scrapy.Field()
     info = scrapy.Field()
+
+class deptItem(scrapy.Item):
+    cname = scrapy.Field()
+    courses = scrapy.Field()
