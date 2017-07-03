@@ -1,0 +1,16 @@
+{
+   "name": "scrape",
+   "version": "0.0.1",
+   "description": "",
+   "main": "index.js",
+   "dependencies": {
+      "request": "latest",
+      "cheerio": "latest"
+   },
+   "devDependencies": {},
+   "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+   },
+   "author": "Jainul",
+   "license": "MIT"
+}
