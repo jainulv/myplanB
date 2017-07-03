@@ -10,6 +10,7 @@ import time
 import concurrent.futures
 
 dept_list=[]
+dept_dict={}
 all_list=[]
 
 def open(url):
@@ -20,7 +21,9 @@ def open(url):
 def a_scrape(elem):
     for j in elem.find_all('a'):
         if '.html' in j['href']:
-            dept_list.append(j['href'])
+            if j['href'] not in dept_list:
+                dept_list.append(j['href'])
+                dept_dict[j['href']]=j.getText()
 
 def scrape(url):
     soup=open(url)
@@ -34,9 +37,10 @@ def scrape(url):
                     a_scrape(y)
                 a_scrape(x)
 
-def scrape_courses(url):
+def scrape_courses(url, code):
     soup=open(url)
     cname=str(soup.find('h1').select('br')[len(soup.find('h1').find_all('br'))-1].next_sibling)
+    cname=dept_dict[code]
     course_dict={'cname':cname.strip('\n')}
     c_list=[]
     all_a_elems=soup.find_all('a')
@@ -55,24 +59,15 @@ def write_JSON(dict):
     with io.open('../myplanB/courses.json','w') as fout:
         json.dump(dict,fout)
     
-def normalize():
-    json_data=[]
-    for k,v in course_dict.items():
-        json_data.append({'title':k,'info':v})
-    return json_data
-
 t0=time.time()
 base_url='https://www.washington.edu/students/crscat/'
 scrape(base_url)
-dept_list=set(dept_list)
+#dept_list=set(dept_list)
 print('Number of departments: ', len(dept_list))
 URLS=(base_url+i for i in dept_list)
 with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-    future_results={executor.submit(scrape_courses, url): url for url in URLS}
-'''
-with io.open('../myplanB/courses.json','w') as fout:
-    json.dump(normalize(), fout)
-'''
+    future_results={executor.submit(scrape_courses, base_url+i, i): i for i in dept_list}
+
 write_JSON(all_list)
 print('Number of departments in JSON file: ', len(all_list))
 print('Done!')
