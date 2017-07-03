@@ -24,6 +24,7 @@ class courseSpider(scrapy.Spider):
             yield response.follow(href, callback=self.parse_course, meta={'cname': dItem, 'splash': {'endpoint': 'render.html', 'args': {'wait': 0.5}}, 'url': href.extract()})
 
     def parse_course(self, response):
+        # get course details
         dItem = response.meta['cname']
         dItem['courses'] = []
         for x in response.xpath('/html/body/p/a[@name]'):
