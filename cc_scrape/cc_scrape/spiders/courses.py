@@ -34,4 +34,3 @@ class courseSpider(scrapy.Spider):
             dItem['courses'].append(cItem)
 
         yield dItem
-

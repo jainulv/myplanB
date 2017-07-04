@@ -46,9 +46,9 @@ ROBOTSTXT_OBEY = True
 
 # Enable or disable spider middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
-#SPIDER_MIDDLEWARES = {
-#    'cc_scrape.middlewares.CcScrapeSpiderMiddleware': 543,
-#}
+SPIDER_MIDDLEWARES = {
+        'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
+}
 
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
@@ -91,3 +91,9 @@ DOWNLOADER_MIDDLEWARES = {
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'
 HTTPCACHE_STORAGE = 'scrapy_splash.SplashAwareFSCacheStorage'
+
+FEED_URI = 'catlog.json'
+FEED_FORMAT = 'json'
+
+LOG_FILE = 'Log.txt'
+LOG_LEVEL = 'INFO'
