@@ -129,14 +129,23 @@ def write_JSON(dict):
     with io.open('../myplanB/courses.json','w') as fout:
         json.dump(dict,fout)
 
-scrape_for_depts(base_url)
-print('Number of departments on website:', len(dept_dict.keys()))
-# asynchronous scraping with 10 max_workers
-with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-    future_results={executor.submit(scrape_for_courses, base_url+i, i):
-                            i for i in dept_dict.keys()}
+def main():
+    '''
+    Main method for the script
+    '''
+    scrape_for_depts(base_url)
+    print('Number of departments on website:', len(dept_dict.keys()))
+    # asynchronous scraping with 24 max_workers
+    with concurrent.futures.ThreadPoolExecutor(max_workers=24) as executor:
+        future_results={executor.submit(scrape_for_courses, base_url+i, i):
+                                i for i in dept_dict.keys()}
 
-write_JSON(all_list)
-print('Number of departments in JSON file: ', len(all_list))
-print('Done!')
-
+    write_JSON(all_list)
+    print('Number of departments in JSON file: ', len(all_list))
+    print('Done!')
+        
+if __name__=='__main__':
+    try:
+        main()
+    except:
+        print('Oops! Error Occured!')
