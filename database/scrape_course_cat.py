@@ -8,6 +8,8 @@ __author__='Jainul Vaghasia'
 __email__='jnv3@uw.edu'
 __status__='Development'
 '''
+# Last edited by: Akshit Patel, reason: changed the single quotes to double quotes.
+
 # standard imports
 import json                       # for dumping json into a file
 import io                         # for file input/ouput
@@ -21,7 +23,7 @@ import concurrent.futures         # for async connection
 
 # global variables
 dept_dict={}                      # contains department name for each page in dept_list
-all_list=[]                       # list of dictionaries of department name and courses
+all_list={}                       # list of dictionaries of department name and courses
 base_url='https://www.washington.edu/students/crscat/'  # starting URL
 
 def open(url):
@@ -99,22 +101,22 @@ def scrape_for_courses(url, code):
     soup=open(url)
     cname=dept_dict[code]
     # add the department name
-    course_dict={'cname':cname.strip('\n')}
+    course_dict={"cname":cname.strip('\n')}
     c_list=[]
     all_a_elems=soup.find_all('a')
     for uls in all_a_elems:
         # filter all empty link elements and non-course link elements
         if uls.has_attr('name') and uls.findChildren():
             # add course title
-            temp_dict={'title':uls.find('b').getText()}
+            temp_dict={"title":uls.find('b').getText()}
             # add course description if available, N/A otherwise
             if uls.findChildren() and len(uls.find_all('br'))>1:
-                temp_dict['description']=str(uls.select('br')[0].next_sibling)
+                temp_dict["description"]=str(uls.select('br')[0].next_sibling)
             else:
-                temp_dict['description']='N/A'
+                temp_dict["description"]="N/A"
             c_list.append(temp_dict)
     # append the new courses to previously added courses
-    course_dict['courses']=c_list
+    course_dict["courses"]=c_list
     all_list.append(course_dict)
 
 def write_JSON(dict):
