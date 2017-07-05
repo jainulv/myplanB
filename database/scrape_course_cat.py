@@ -126,7 +126,7 @@ def write_JSON(dict):
     dict: Dictionary
        The dictionary that needs to be written
     '''
-    with io.open('../myplanB/courses.json','w') as fout:
+    with io.open('courses.json','w') as fout:
         json.dump(dict,fout)
 
 def main():
@@ -145,7 +145,4 @@ def main():
     print('Done!')
         
 if __name__=='__main__':
-    try:
-        main()
-    except:
-        print('Oops! Error Occured!')
+    main()
