@@ -23,7 +23,7 @@ import concurrent.futures         # for async connection
 
 # global variables
 dept_dict={}                      # contains department name for each page in dept_list
-all_list={}                       # list of dictionaries of department name and courses
+all_list=[]                      # list of dictionaries of department name and courses
 base_url='https://www.washington.edu/students/crscat/'  # starting URL
 
 def open(url):
@@ -142,7 +142,7 @@ def main():
         future_results={executor.submit(scrape_for_courses, base_url+i, i):
                                 i for i in dept_dict.keys()}
 
-    write_JSON(all_list)
+    write_JSON({"catlog":all_list})
     print('Number of departments in JSON file: ', len(all_list))
     print('Done!')
         
