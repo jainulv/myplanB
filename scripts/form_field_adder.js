@@ -11,7 +11,7 @@ $(document).ready(function() {
             x++; //text box increment
             $(add_button).detach(); //detach the add button
             $(submit).detach(); // detach the submit button
-            $(wrapper).append('<div>Course name: <input type="text" name="coursename"/> Rating: <input type="text" name="coursename"/><a href="#" class="remove_field">Remove</a></div>'); //add input box
+            $(wrapper).append('<div>Course name: <input type="text" name="coursename"/> Rating: <input type="text" name="rating"/><a href="#" class="remove_field">Remove</a></div>'); //add input box
             $(wrapper).append(add_button); // add back the add button
             $(wrapper).append(submit); // add back the submit button
         }
