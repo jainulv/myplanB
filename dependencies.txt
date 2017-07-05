@@ -1,0 +1,6 @@
+This file contains all dependencies listed by filename:
+
+scrape_course_cat.py:
+- BeautifulSoup4
+- html5lib
+- urllib
