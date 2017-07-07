@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.conf import settings
 from couchdb import Server
 from couchdb import Document
+import couchdb
 import json
 from .utils import scrape_course_cat as sc
 from .utils import recommender as rec
@@ -14,27 +15,36 @@ SERVER=Server(getattr(settings, 'COUCHDB_SERVER'))
 SERVER.resource.credentials=('admin','*@Ja#9824147318!')
 db=SERVER['course_catlog']
 db2=SERVER['recommender_data']
-db=SERVER['course_catlog']
 
 lst=[]
+kst=[]
 view=db.iterview('query_doc/a_docs', batch=2500)
 for row in view:
     lst.append(row.key)
+    kst.append(row.value)
     
 def update_DB(request):
-    global db,db2
+    global lst,kst
     sc.main()
     # update course catlog
     with open('courses.json', 'r') as fin:
         db_entry=json.load(fin)
         for i in range(len(db_entry['catlog'])):
             for j in range(len(db_entry['catlog'][i]['courses'])):
-                if not db[db_entry['catlog'][i]['courses'][j]['title']]:
+                try:
+                    db[db_entry['catlog'][i]['courses'][j]['title']]
+                except couchdb.ResourceNotFound:
                     db[db_entry['catlog'][i]['courses'][j]['title']]={'description': db_entry['catlog'][i]['courses'][j]['description']}
     # update training data for the recommender
+    view=db.iterview('query_doc/a_docs', batch=2500)
+    lst=[]
+    kst=[]
+    for row in view:
+        lst.append(row.key)
+        kst.append(row.value)
     SERVER.delete('recommender_data')
     db2=SERVER.create('recommender_data')
-    rec.main(to_train=True)
+    rec.main(key=lst, value=kst, to_train=True)
     return HttpResponse('Database Updated')
 
 def  index(request):
@@ -57,9 +67,13 @@ def result(request):
         if 'coursename_' in k:
             course_data.append(int(v))
         elif 'rating_' in k:
-            rating_data.append(int(v))
+            rating_data.append(float(v))
     print(course_data)
     print(rating_data)
+    rclist=rec.main(course_data, lst, kst)
+    recommended_courses={}
+    for i in rclist:
+        recommended_courses[lst[int(i)]]=kst[int(i)]
     #return HttpResponseRedirect(reverse('front:result'))
     #return render(request, 'front/courses.json')
-    return HttpResponse(rec.main(course_data))
+    return HttpResponse(recommended_courses.items())

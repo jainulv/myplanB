@@ -12,8 +12,8 @@ SERVER=Server(getattr(settings, 'COUCHDB_SERVER'))
 SERVER.resource.credentials=('admin', '*@Ja#9824147318!')
 db = SERVER['course_catlog']
 db2=SERVER['recommender_data']
-df=pd.DataFrame(columns=['course', 'description', 'id'])
-dk=pd.DataFrame(columns=['course', 'id'])
+#df=pd.DataFrame(columns=['course', 'description', 'id'])
+#dk=pd.DataFrame(columns=['course', 'id'])
     
 def train(data_source):
     ds=pd.DataFrame(data_source)
@@ -46,25 +46,40 @@ def parse_predict(c_to_predict):
     res=_predict(c_to_predict)
     result=[]
     for i in range(1,95,2):
-        result.append({"".join(df.ix[df['id']==res[i]]['course'].astype('str')):
-                      "".join(df.ix[df['id']==res[i]]['description'].astype('str'))})
+        #result.append({"".join(df.ix[df['id']==res[i]]['course'].astype('str')):
+         #             "".join(df.ix[df['id']==res[i]]['description'].astype('str'))})
+        result.append(int(res[i]-1))
     return result
 
-def main(c_list=[], to_train=False):
-    global df,dk
-    view=db.iterview('query_doc/a_docs', batch=2500)
-    q=0
-    for row in view:
-        q=q+1
-        df=df.append(pd.DataFrame({'course': [row.key], 'description': [row.value], 'id': [int(q)]}))
-        dk=dk.append(pd.DataFrame({'course': [row.key+' '+row.value], 'id': [int(q)]}))
-    df.index=range(0,len(df))
-    dk.index=range(0,len(df))
+def main(c_list=[], key=[], value=[], to_train=False):
+#    global df,dk
+#    view=db.iterview('query_doc/a_docs', batch=2500)
+#    q=0
+#    for row in view:
+#        q=q+1
+#        df=df.append(pd.DataFrame({'course': [row.key], 'description': [row.value], 'id': [int(q)]}))
+#        dk=dk.append(pd.DataFrame({'course': [row.key+' '+row.value], 'id': [int(q)]}))
+#    q=0
+#    for i in range(len(key)):
+#        q=q+1
+#        df=df.append(pd.DataFrame({'course': [key[i]], 'description': [value[i]], 'id':[int(q)]}))
+#        dk=dk.append(pd.DataFrame({'course': [key[i]+' '+value[i]], 'id': [int(q)]}))
+#    df.index=range(0,len(df))
+#    dk.index=range(0,len(df))
+#    print(df)
+#    print(dk)
     if to_train:
+        dk=pd.DataFrame(columns=['course', 'id'])
+        q=0
+        for i in range(len(key)):
+            q=q+1
+            dk=dk.append(pd.DataFrame({'course': [key[i]+' '+value[i]], 'id': [int(q)]}))
+        dk.index=range(0,len(dk))
         train(dk)
     else:
         result=[]
         for c in c_list:
-            result.append(parse_predict(c))
+            result.extend(parse_predict(c))
+        print(result)
         return result
     
