@@ -9,7 +9,7 @@ import couchdb
 import json
 from .utils import scrape_course_cat as sc
 from .utils import recommender as rec
-from .forms import InputForm, NCoursesForm
+from .forms import InputForm
 
 SERVER=Server(getattr(settings, 'COUCHDB_SERVER'))
 SERVER.resource.credentials=('admin','*@Ja#9824147318!')
@@ -47,29 +47,29 @@ def update_DB(request):
     rec.main(key=lst, value=kst, to_train=True)
     return HttpResponse('Database Updated')
 
-def  index(request):
-    form=NCoursesForm(request.POST)
-    return render(request, 'front/index.html', {'form': form})
+#def  index(request):
+#    form=NCoursesForm(request.POST)
+#    return render(request, 'front/index.html', {'form': form})
         
-def courses(request):
+def index(request):
     #return HttpResponse('Hello, world. You\'re at the front index.')
-    if request.method == 'POST':
-        form=InputForm(extra_fields=int(request.POST['n_courses']), dropdown_data=lst)
-    else:
-        form=InputForm()
-    return render(request, 'front/courses.html', {'form': form})
+    form=InputForm(dropdown_data=lst)
+    return render(request, 'front/index.html', {'form': form})
 
 def result(request):
     course_data=[]
-    rating_data=[]
+    #rating_data=[]
+#    print(request.POST)
+#    for k,v in request.POST.items():
+#        if 'coursename_' in k:
+#            course_data.append(int(v))
+#        elif 'rating_' in k:
+#            rating_data.append(float(v))
+#    print(course_data)
+#    print(rating_data)
+    course_data=[int(request.POST['coursename'])]
     print(request.POST)
-    for k,v in request.POST.items():
-        if 'coursename_' in k:
-            course_data.append(int(v))
-        elif 'rating_' in k:
-            rating_data.append(float(v))
     print(course_data)
-    print(rating_data)
     rclist=rec.main(course_data, lst, kst)
     recommended_courses={}
     for i in rclist:

@@ -29,7 +29,7 @@ def _train(ds):
     cosine_similarities=linear_kernel(tfidf_matrix, tfidf_matrix)
     
     for idx, row in ds.iterrows():
-        similar_indices = cosine_similarities[idx].argsort()[:-50:-1]
+        similar_indices = cosine_similarities[idx].argsort()[:-100:-1]
         similar_items = [(cosine_similarities[idx][i], ds['id'][i])
                          for i in similar_indices]
         # First item is the item itself, so remove it.
@@ -45,7 +45,7 @@ def _predict(item_id):
 def parse_predict(c_to_predict):
     res=_predict(c_to_predict)
     result=[]
-    for i in range(1,95,2):
+    for i in range(1,191,2):
         #result.append({"".join(df.ix[df['id']==res[i]]['course'].astype('str')):
          #             "".join(df.ix[df['id']==res[i]]['description'].astype('str'))})
         result.append(int(res[i]-1))
