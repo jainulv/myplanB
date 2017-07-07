@@ -3,21 +3,14 @@
   <head>
     <title>Recommender input</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    {% load static %}
-    <script src="{% static "front/form_field_adder.js" %}"></script>
   </head>
   <body>
-    <h1>Enter your past courses and rate them</h1>
-    <form action="{% url 'front:result'%}" method="post">
+    <h1>Enter the number of courses you want to input</h1>
+    <form action="{% url 'front:courses'%}" method="post">
       {% csrf_token %}
-      <div class="input_fields_wrap">
-	<div>
-	  Course name: <input type="text" name="coursename">
-	  Rating: <input type="text" name="rating">
-	</div>
-	<button class="add_field_button">Add More Fields</button>
-	<input type="submit" class="submit" value="Submit" />
-      </div>
-    </form>
-  </body>
+        {{form.as_p}}
+        <input type="submit" class="submit" value="Submit" />
+      </form>
+    </body>
 </html>
+      

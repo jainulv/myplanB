@@ -9,7 +9,7 @@ from sklearn.metrics.pairwise import linear_kernel
 
 SERVER=Server(getattr(settings, 'COUCHDB_SERVER'))
 #SERVER=Server('http://127.0.0.1:5984')
-SERVER.resource.credentials=('admin', 'YOUR PASSWORD')
+SERVER.resource.credentials=('admin', '*@Ja#9824147318!')
 db = SERVER['course_catlog']
 db2=SERVER['recommender_data']
 df=pd.DataFrame(columns=['course', 'description', 'id'])
@@ -20,7 +20,6 @@ def train(data_source):
     return _train(ds)
 
 def _train(ds):
-    #fs=[]
     tf=TfidfVectorizer(analyzer='word',
                        ngram_range=(1,3),
                        min_df=0,
@@ -38,12 +37,10 @@ def _train(ds):
         # [(1,2), (3,4)] -> (1,2,3,4)
         flattened = sum(similar_items[1:], ())
         db2[str(idx)]={'rec': list(flattened)}
-        #fs.append(flattened)
-        #return pd.DataFrame(fs)
 
 def _predict(item_id):
     #return flattened.iloc[[item_id-1]]
-    return db2[str(item_id-1)]['rec']
+    return db2[str(item_id)]['rec']
     
 def parse_predict(c_to_predict):
     res=_predict(c_to_predict)

@@ -8,12 +8,19 @@ from couchdb import Document
 import json
 from .utils import scrape_course_cat as sc
 from .utils import recommender as rec
+from .forms import InputForm, NCoursesForm
 
 SERVER=Server(getattr(settings, 'COUCHDB_SERVER'))
-SERVER.resource.credentials=('admin','YOUR PASSWORD')
+SERVER.resource.credentials=('admin','*@Ja#9824147318!')
 db=SERVER['course_catlog']
 db2=SERVER['recommender_data']
+db=SERVER['course_catlog']
 
+lst=[]
+view=db.iterview('query_doc/a_docs', batch=2500)
+for row in view:
+    lst.append(row.key)
+    
 def update_DB(request):
     global db,db2
     sc.main()
@@ -29,14 +36,30 @@ def update_DB(request):
     db2=SERVER.create('recommender_data')
     rec.main(to_train=True)
     return HttpResponse('Database Updated')
+
+def  index(request):
+    form=NCoursesForm(request.POST)
+    return render(request, 'front/index.html', {'form': form})
         
-def index(request):
+def courses(request):
     #return HttpResponse('Hello, world. You\'re at the front index.')
-    return render(request, 'front/index.html')
+    if request.method == 'POST':
+        form=InputForm(extra_fields=int(request.POST['n_courses']), dropdown_data=lst)
+    else:
+        form=InputForm()
+    return render(request, 'front/courses.html', {'form': form})
 
 def result(request):
-    course_data=request.POST.getlist('coursename')
-    rating_data=request.POST.getlist('rating')
+    course_data=[]
+    rating_data=[]
+    print(request.POST)
+    for k,v in request.POST.items():
+        if 'coursename_' in k:
+            course_data.append(int(v))
+        elif 'rating_' in k:
+            rating_data.append(int(v))
+    print(course_data)
+    print(rating_data)
     #return HttpResponseRedirect(reverse('front:result'))
     #return render(request, 'front/courses.json')
-    return HttpResponse(rec.main([3000, 3500, 1500]))
+    return HttpResponse(rec.main(course_data))
