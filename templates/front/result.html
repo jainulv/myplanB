@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Recommender output</title>
+      {% load static %}
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+      <script src="{% static "front/masonry.pkgd.min.js" %}"></script>
+        <script src="{% static "front/imagesloaded.pkgd.min.js" %}"></script>
+      <script src="{% static "front/result.js" %}"></script>
+      <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    </head>
+    <body style="background-color: floralwhite">
+        <div class='grid'>
+            {% for r in rec.items %}
+                <div class="w3-card-4" style="width: 400px; float:left; margin:20px">
+                    <header class="w3-container" style="color: whitesmoke">
+                    <h1>{{r.0}}</h1>
+                    </header>
+                    <div class="w3-container">
+                    <p>{{r.1}}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <script>
+            // init Masonry
+            var $grid = $('.grid').masonry({
+              // options...
+            });
+            // layout Masonry after each image loads
+            $grid.imagesLoaded().progress( function() {
+              $grid.masonry('layout');
+            });
+        </script>
+    </body>
+</html>

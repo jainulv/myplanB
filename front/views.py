@@ -76,4 +76,4 @@ def result(request):
         recommended_courses[lst[int(i)]]=kst[int(i)]
     #return HttpResponseRedirect(reverse('front:result'))
     #return render(request, 'front/courses.json')
-    return HttpResponse(recommended_courses.items())
+    return render(request, 'front/result.html', {'rec': recommended_courses})
