@@ -8,8 +8,43 @@
         <script src="{% static "front/imagesloaded.pkgd.min.js" %}"></script>
       <script src="{% static "front/result.js" %}"></script>
       <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+      <style>
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            padding: 12px 16px;
+            z-index: 1;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+      </style>
     </head>
     <body style="background-color: floralwhite">
+    <form action="{% url 'front:result'%}" method="post">
+      {% csrf_token %}
+      <div class="input_fields_wrap">
+	<div style="height:10vh; min-height:100%; max-height:100%; background-color: rgb(22,71,101);  background-size:contain; color:#ddd; text-shadow:3px 4px #333; border: 1px solid transparent">
+        <div style="position: relative; left:5%; top:10%">
+            <div class="dropdown">
+            {{form.as_p}}
+            </div>
+        <input type="submit" class="submit" value="Submit" />
+        </div>
+	</div>
+	<!--button class="add_field_button">Add More Fields</button-->
+      </div>
+    </form>
+        <p>Showing similar courses to <b>{{cname}}:</b></p>
         <div class='grid'>
             {% for r in rec.items %}
                 <div class="w3-card-4" style="width: 400px; float:left; margin:20px">

@@ -15,3 +15,4 @@ $(document).ready(function(){
         lowers[i].style.background=light_colors[random_color];
     }
 });
+

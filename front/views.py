@@ -76,4 +76,5 @@ def result(request):
         recommended_courses[lst[int(i)]]=kst[int(i)]
     #return HttpResponseRedirect(reverse('front:result'))
     #return render(request, 'front/courses.json')
-    return render(request, 'front/result.html', {'rec': recommended_courses})
+    form=InputForm(dropdown_data=lst, initial={'coursename': course_data})
+    return render(request, 'front/result.html', {'rec': recommended_courses, 'form': form, 'cname': lst[course_data[0]]})
